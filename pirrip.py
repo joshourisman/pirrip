@@ -1,3 +1,4 @@
+import requests
 from fastapi import FastAPI
 
 app = FastAPI()
@@ -5,9 +6,9 @@ app = FastAPI()
 
 @app.get("/pypi/{package_name}/json")
 async def package_info(package_name: str):
-    return {"package": package_name}
+    return requests.get(f"https://pypi.org/pypi/{package_name}/json").json()
 
 
 @app.get("/pypi/{package_name}/{release}/json")
 async def release_info(package_name: str, release: str):
-    return {"package": package_name, "release": release}
+    return requests.get(f"https://pypi.org/pypi/{package_name}/{release}/json").json()
