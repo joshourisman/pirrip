@@ -1,6 +1,7 @@
 from typing import Optional
+
 import requests
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseSettings, DirectoryPath
@@ -43,6 +44,10 @@ async def package_detail(request: Request, package_name: str):
     settings = PirripSettings()
     package_dir = settings.PACKAGE_DIR
     package = package_dir / package_name
+
+    if package.exists() is False:
+        raise HTTPException(status_code=404, detail="Package not found.")
+
     files = [obj for obj in package.iterdir() if obj.is_file() is True]
 
     return templates.TemplateResponse(
