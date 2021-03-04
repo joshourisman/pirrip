@@ -27,7 +27,7 @@ async def release_info(package_name: str, release: str):
     return requests.get(f"https://pypi.org/pypi/{package_name}/{release}/json").json()
 
 
-@app.get("/simple", response_class=HTMLResponse)
+@app.get("/simple/", response_class=HTMLResponse)
 async def list_packages(request: Request):
     settings = PirripSettings()
     package_dir = settings.PACKAGE_DIR
@@ -38,7 +38,7 @@ async def list_packages(request: Request):
     )
 
 
-@app.get("/simple/{package_name}", response_class=HTMLResponse)
+@app.get("/simple/{package_name}/", response_class=HTMLResponse)
 async def package_detail(request: Request, package_name: str):
     settings = PirripSettings()
     package_dir = settings.PACKAGE_DIR
