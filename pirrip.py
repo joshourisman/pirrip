@@ -25,12 +25,11 @@ class PirripSettings(BaseSettings):
         env_prefix = "PIRRIP_"
 
 
+settings = PirripSettings()
 console = Console()
 
 
 async def get_pypi_data(package_name: str, release: str = "") -> dict:
-    settings = PirripSettings()
-
     package_string = Path(package_name) / release
 
     console.log(f"Requesting PyPi data for {package_string}.")
@@ -63,7 +62,6 @@ async def release_info(package_name: str, release: str):
 
 @app.get("/simple/", response_class=HTMLResponse)
 async def list_packages(request: Request):
-    settings = PirripSettings()
     package_dir = settings.PACKAGE_DIR
     packages = [obj for obj in package_dir.iterdir() if obj.is_dir() is True]
 
@@ -74,7 +72,6 @@ async def list_packages(request: Request):
 
 @app.get("/simple/{package_name}/", response_class=HTMLResponse)
 async def package_detail(request: Request, package_name: str):
-    settings = PirripSettings()
     package_dir = settings.PACKAGE_DIR
     package = package_dir / package_name
 
