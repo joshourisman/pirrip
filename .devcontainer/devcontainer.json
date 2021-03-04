@@ -33,11 +33,12 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "ms-python.python",
-    "ms-python.vscode-pylance",
-    "bungcip.better-toml",
-    "bodil.prettier-toml"
-  ],
+	"ms-python.python",
+	"ms-python.vscode-pylance",
+	"bungcip.better-toml",
+	"bodil.prettier-toml",
+	"samuelcolvin.jinjahtml"
+],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
