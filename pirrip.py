@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 
 import requests
@@ -13,19 +14,26 @@ templates = Jinja2Templates(directory="templates")
 
 class PirripSettings(BaseSettings):
     PACKAGE_DIR: Optional[DirectoryPath]
+    PYPI_FALLBACK: Optional[bool] = True
 
     class Config:
         env_prefix = "PIRRIP_"
 
 
+async def get_pypi_data(package_name: str, release: Optional[str] = "") -> dict:
+    package_string = Path(package_name) / release
+    request_url = f"https://pypi.org/pypi/{package_string}/json"
+    return requests.get(request_url).json()
+
+
 @app.get("/pypi/{package_name}/json")
 async def package_info(package_name: str):
-    return requests.get(f"https://pypi.org/pypi/{package_name}/json").json()
+    return await get_pypi_data(package_name)
 
 
 @app.get("/pypi/{package_name}/{release}/json")
 async def release_info(package_name: str, release: str):
-    return requests.get(f"https://pypi.org/pypi/{package_name}/{release}/json").json()
+    return await get_pypi_data(package_name, release)
 
 
 @app.get("/simple/", response_class=HTMLResponse)
