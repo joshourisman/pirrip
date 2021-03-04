@@ -1,12 +1,14 @@
 from pathlib import Path
 from typing import Optional
-from pydantic.types import SecretStr
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from faunadb import query as q
+from faunadb.client import FaunaClient
 from pydantic import BaseSettings, DirectoryPath
+from pydantic.types import SecretStr
 from rich.console import Console
 
 app = FastAPI()
@@ -27,12 +29,26 @@ console = Console()
 
 
 async def get_pypi_data(package_name: str, release: str = "") -> dict:
+    settings = PirripSettings()
+
     package_string = Path(package_name) / release
 
-    console.log(f"Requesting PyPi data on {package_string}.")
-
+    console.log(f"Requesting PyPi data for {package_string}.")
     request_url = f"https://pypi.org/pypi/{package_string}/json"
-    return requests.get(request_url).json()
+    response = requests.get(request_url).json()
+
+    if settings.FAUNADB_KEY is not None:
+        console.log(f"Logging PyPi data for {package_string} to FaunaDB.")
+
+        client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
+        client.query(
+            q.create(
+                q.collection("packages"),
+                {"data": response},
+            )
+        )
+
+    return response
 
 
 @app.get("/pypi/{package_name}/json")
