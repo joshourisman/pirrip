@@ -1,5 +1,9 @@
-<html>
+{% extends "base.html" %}
+
+{% block title %}Links for {% endblock %}
+
+{% block body %}
     {% for file in files %}
     <a href="/simple/{{ file }}">{{ file }}</a>
     {% endfor %}
-</html>
+{% endblock %}

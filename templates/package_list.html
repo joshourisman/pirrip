@@ -1,5 +1,9 @@
-<html>
+{% extends "base.html" %}
+
+{% block title%}Simple Index{% endblock %}
+
+{% block body %}
     {% for package in packages %}
     <a href="/simple/{{ package }}/">{{ package }}</a>
     {% endfor %}
-</html>
+{% endblock %}
