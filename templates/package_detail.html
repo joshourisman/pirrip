@@ -3,7 +3,9 @@
 {% block title %}Links for {{ package_name }}{% endblock %}
 
 {% block body %}
+    <h1>Links for {{ package_name }}</h1>
     {% for file in files %}
     <a href="/simple/{{ file }}">{{ file }}</a>
+    <br />
     {% endfor %}
 {% endblock %}
