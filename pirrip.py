@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional
+from pydantic.types import SecretStr
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
@@ -16,6 +17,7 @@ templates = Jinja2Templates(directory="templates")
 class PirripSettings(BaseSettings):
     PACKAGE_DIR: Optional[DirectoryPath]
     PYPI_FALLBACK: Optional[bool] = True
+    FAUNADB_KEY: Optional[SecretStr]
 
     class Config:
         env_prefix = "PIRRIP_"
