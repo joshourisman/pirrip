@@ -66,5 +66,6 @@ async def package_detail(request: Request, package_name: str):
     files = [obj for obj in package.iterdir() if obj.is_file() is True]
 
     return templates.TemplateResponse(
-        "package_detail.html", {"request": request, "files": files}
+        "package_detail.html",
+        {"request": request, "package_name": package_name, "files": files},
     )
