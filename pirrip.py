@@ -6,6 +6,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseSettings, DirectoryPath
+from rich.console import Console
 
 app = FastAPI()
 
@@ -20,8 +21,14 @@ class PirripSettings(BaseSettings):
         env_prefix = "PIRRIP_"
 
 
+console = Console()
+
+
 async def get_pypi_data(package_name: str, release: str = "") -> dict:
     package_string = Path(package_name) / release
+
+    console.log(f"Requesting PyPi data on {package_string}.")
+
     request_url = f"https://pypi.org/pypi/{package_string}/json"
     return requests.get(request_url).json()
 
