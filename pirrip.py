@@ -20,7 +20,7 @@ class PirripSettings(BaseSettings):
         env_prefix = "PIRRIP_"
 
 
-async def get_pypi_data(package_name: str, release: Optional[str] = "") -> dict:
+async def get_pypi_data(package_name: str, release: str = "") -> dict:
     package_string = Path(package_name) / release
     request_url = f"https://pypi.org/pypi/{package_string}/json"
     return requests.get(request_url).json()
