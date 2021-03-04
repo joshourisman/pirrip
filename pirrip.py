@@ -39,7 +39,12 @@ async def list_packages(request: Request):
 
 
 @app.get("/simple/{package_name}", response_class=HTMLResponse)
-async def read_item(request: Request, package_name: str):
+async def package_detail(request: Request, package_name: str):
+    settings = PirripSettings()
+    package_dir = settings.PACKAGE_DIR
+    package = package_dir / package_name
+    files = [obj for obj in package.iterdir() if obj.is_file() is True]
+
     return templates.TemplateResponse(
-        "package.html", {"request": request, "package_name": package_name}
+        "package_detail.html", {"request": request, "files": files}
     )
