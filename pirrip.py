@@ -156,15 +156,13 @@ async def list_packages(request: Request):
 
 @app.get("/simple/{package_name}/", response_class=HTMLResponse)
 async def package_detail(request: Request, package_name: str):
-    package_dir = settings.PACKAGE_DIR
-    package = package_dir / package_name
-
-    if package.exists() is False:
-        raise HTTPException(status_code=404, detail="Package not found.")
-
-    files = [obj for obj in package.iterdir() if obj.is_file() is True]
+    package = await get_fauna_data(package_name)
 
     return templates.TemplateResponse(
         "package_detail.html",
-        {"request": request, "package_name": package_name, "files": files},
+        {
+            "request": request,
+            "package_name": package_name,
+            "releases": package["releases"],
+        },
     )

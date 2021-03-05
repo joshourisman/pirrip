@@ -4,9 +4,10 @@
 
 {% block body %}
     <h1>Links for {{ package_name }}</h1>
+    {% for files in releases.values() %}
     {% for file in files %}
-    <a href="/simple/{{ file }}">{{ file }}</a>
-    <a href="https://files.pythonhosted.org/packages/4a/10/e5ece201f7ad282c492e1c866cbd62040728f68d6f7da8dd705c04a299ba/django-pydantic-settings-0.1.0.tar.gz#sha256=a014ec0e2c990616572ff25f515960a2438815d68666e06314bdcc3fae8815a5" data-requires-python="&gt;=3.6,&lt;4.0">django-pydantic-settings-0.1.0.tar.gz</a>
+    <a href="{{ file.url }}" data-requires-python="{{ file.requires_python }}">{{ file.filename }}</a>
     <br />
+    {% endfor %}
     {% endfor %}
 {% endblock %}
