@@ -1,5 +1,5 @@
 from typing import Optional
-from faunadb.errors import NotFound as FaunaPackageNotFound
+from faunadb.errors import BadRequest, NotFound as FaunaPackageNotFound
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
@@ -41,11 +41,16 @@ class FaunaReleaseNotFound(Exception):
     pass
 
 
-async def get_fauna_data(package_name: str, release: str = "") -> dict:
+async def get_package_by_name(package_name: str) -> dict:
     client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
+    return client.query(q.get(q.match(q.index("package_by_name"), package_name)))
 
+
+async def get_fauna_data(package_name: str, release: str = "") -> dict:
+    console.log(f"Querying FaunaDB for {package_name}.")
     try:
-        package = client.query(q.get(q.match(q.index("package_by_name"), package_name)))
+        fauna_package = await get_package_by_name(package_name)
+        package = fauna_package["data"]
     except FaunaPackageNotFound as e:
         if settings.PYPI_FALLBACK is True:
             package = await get_pypi_data(package_name)
@@ -55,6 +60,8 @@ async def get_fauna_data(package_name: str, release: str = "") -> dict:
         if bool(release) is True and release not in package["releases"].keys():
             if settings.PYPI_FALLBACK is True:
                 package = await get_pypi_data(package_name)
+                if release not in package["releases"].keys():
+                    raise PyPiReleaseNotFound
 
     if bool(release) is True and release not in package["releases"].keys():
         raise FaunaReleaseNotFound
@@ -76,28 +83,33 @@ async def get_pypi_data(package_name: str) -> dict:
     console.log(f"Logging PyPi data for {package_name} to FaunaDB.")
 
     client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
-    client.query(
-        q.create(
-            q.collection("packages"),
-            {"data": package_data},
+    try:
+        client.query(
+            q.create(
+                q.collection("packages"),
+                {"data": package_data},
+            )
         )
-    )
+    except BadRequest:
+        package = await get_package_by_name(package_name)
+        ref = package["ref"]
+        client.query(q.update(ref, {"data": package_data}))
 
     return package_data
 
 
 @app.get("/pypi/{package_name}/json")
 async def package_info(package_name: str):
-    console.log(f"Attempting to fetch data for {package_name} from FaunaDB.")
+    console.log(f"Attempting to fetch data for {package_name}.")
     try:
         package = await get_fauna_data(package_name)
     except FaunaPackageNotFound:
         raise HTTPException(
-            status_code=404, detail="Package not found in Pirrip database."
+            status_code=404, detail=f"{package_name} not found in Pirrip database."
         )
     except PyPiPackageNotFound:
         raise HTTPException(
-            status_code=404, detail="Package not found in PyPi database."
+            status_code=404, detail=f"{package_name} not found in PyPi database."
         )
 
     return package
@@ -105,7 +117,29 @@ async def package_info(package_name: str):
 
 @app.get("/pypi/{package_name}/{release}/json")
 async def release_info(package_name: str, release: str):
-    return await get_pypi_data(package_name)
+    console.log(f"Attempting to fetch data for {package_name}, release {release}.")
+    try:
+        package = await get_fauna_data(package_name, release)
+    except FaunaPackageNotFound:
+        raise HTTPException(
+            status_code=404, detail=f"{package_name} not found in Pirrip database."
+        )
+    except PyPiPackageNotFound:
+        raise HTTPException(
+            status_code=404, detail=f"{package_name} not found in PyPi database."
+        )
+    except FaunaReleaseNotFound:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{package_name} {release} not found in Pirrip database.",
+        )
+    except PyPiReleaseNotFound:
+        raise HTTPException(
+            status_code=404,
+            detail=f"{package_name} {release} not found in PyPi database.",
+        )
+
+    return package
 
 
 @app.get("/simple/", response_class=HTMLResponse)
