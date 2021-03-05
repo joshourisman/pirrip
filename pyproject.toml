@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "pirrip"
 version = "0.1.0"
-description = ""
+description = "A python package repository with great expectations."
 authors = ["Josh Ourisman <me@josho.io>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
 fastapi = "^0.63.0"
-uvicorn = {extras = ["standard"], version = "^0.13.4"}
+uvicorn = { extras = ["standard"], version = "^0.13.4" }
 requests = "^2.25.1"
 Jinja2 = "^2.11.3"
 pydantic = "^1.8.1"
