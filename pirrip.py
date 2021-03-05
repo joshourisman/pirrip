@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from faunadb.errors import BadRequest, NotFound as FaunaPackageNotFound
 
 import requests
@@ -44,6 +44,11 @@ class FaunaReleaseNotFound(Exception):
 async def get_package_by_name(package_name: str) -> dict:
     client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
     return client.query(q.get(q.match(q.index("package_by_name"), package_name)))
+
+
+async def get_package_names() -> List[str]:
+    client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
+    return client.query(q.paginate(q.match(q.index("package_names"))))["data"]
 
 
 async def get_fauna_data(package_name: str, release: str = "") -> dict:
@@ -144,11 +149,8 @@ async def release_info(package_name: str, release: str):
 
 @app.get("/simple/", response_class=HTMLResponse)
 async def list_packages(request: Request):
-    package_dir = settings.PACKAGE_DIR
-    packages = [obj for obj in package_dir.iterdir() if obj.is_dir() is True]
-
     return templates.TemplateResponse(
-        "package_list.html", {"request": request, "packages": packages}
+        "package_list.html", {"request": request, "packages": await get_package_names()}
     )
 
 
