@@ -1,5 +1,5 @@
-from pathlib import Path
 from typing import Optional
+from faunadb.errors import NotFound as FaunaPackageNotFound
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
@@ -19,7 +19,7 @@ templates = Jinja2Templates(directory="templates")
 class PirripSettings(BaseSettings):
     PACKAGE_DIR: Optional[DirectoryPath]
     PYPI_FALLBACK: Optional[bool] = True
-    FAUNADB_KEY: Optional[SecretStr]
+    FAUNADB_KEY: SecretStr
 
     class Config:
         env_prefix = "PIRRIP_"
@@ -29,35 +29,83 @@ settings = PirripSettings()
 console = Console()
 
 
-async def get_pypi_data(package_name: str, release: str = "") -> dict:
-    package_string = Path(package_name) / release
+class PyPiPackageNotFound(Exception):
+    pass
 
-    console.log(f"Requesting PyPi data for {package_string}.")
-    request_url = f"https://pypi.org/pypi/{package_string}/json"
-    response = requests.get(request_url).json()
 
-    if settings.FAUNADB_KEY is not None:
-        console.log(f"Logging PyPi data for {package_string} to FaunaDB.")
+class PyPiReleaseNotFound(Exception):
+    pass
 
-        client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
-        client.query(
-            q.create(
-                q.collection("packages"),
-                {"data": response},
-            )
+
+class FaunaReleaseNotFound(Exception):
+    pass
+
+
+async def get_fauna_data(package_name: str, release: str = "") -> dict:
+    client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
+
+    try:
+        package = client.query(q.get(q.match(q.index("package_by_name"), package_name)))
+    except FaunaPackageNotFound as e:
+        if settings.PYPI_FALLBACK is True:
+            package = await get_pypi_data(package_name)
+        else:
+            raise e
+    else:
+        if bool(release) is True and release not in package["releases"].keys():
+            if settings.PYPI_FALLBACK is True:
+                package = await get_pypi_data(package_name)
+
+    if bool(release) is True and release not in package["releases"].keys():
+        raise FaunaReleaseNotFound
+
+    return package
+
+
+async def get_pypi_data(package_name: str) -> dict:
+    console.log(f"Requesting PyPi data for {package_name}.")
+    request_url = f"https://pypi.org/pypi/{package_name}/json"
+    response = requests.get(request_url)
+
+    if response.status_code == 404:
+        raise PyPiPackageNotFound
+
+    assert response.status_code == 200
+    package_data = response.json()
+
+    console.log(f"Logging PyPi data for {package_name} to FaunaDB.")
+
+    client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
+    client.query(
+        q.create(
+            q.collection("packages"),
+            {"data": package_data},
         )
+    )
 
-    return response
+    return package_data
 
 
 @app.get("/pypi/{package_name}/json")
 async def package_info(package_name: str):
-    return await get_pypi_data(package_name)
+    console.log(f"Attempting to fetch data for {package_name} from FaunaDB.")
+    try:
+        package = await get_fauna_data(package_name)
+    except FaunaPackageNotFound:
+        raise HTTPException(
+            status_code=404, detail="Package not found in Pirrip database."
+        )
+    except PyPiPackageNotFound:
+        raise HTTPException(
+            status_code=404, detail="Package not found in PyPi database."
+        )
+
+    return package
 
 
 @app.get("/pypi/{package_name}/{release}/json")
 async def release_info(package_name: str, release: str):
-    return await get_pypi_data(package_name, release)
+    return await get_pypi_data(package_name)
 
 
 @app.get("/simple/", response_class=HTMLResponse)
