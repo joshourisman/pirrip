@@ -1,5 +1,5 @@
+import re
 from typing import List, Optional
-from faunadb.errors import BadRequest, NotFound as FaunaPackageNotFound
 
 import requests
 from fastapi import FastAPI, HTTPException, Request
@@ -7,6 +7,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from faunadb import query as q
 from faunadb.client import FaunaClient
+from faunadb.errors import BadRequest
+from faunadb.errors import NotFound as FaunaPackageNotFound
 from pydantic import BaseSettings
 from pydantic.types import SecretStr
 from rich.console import Console
@@ -40,9 +42,15 @@ class FaunaReleaseNotFound(Exception):
     pass
 
 
+def normalize(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
 async def get_package_by_name(package_name: str) -> dict:
     client = FaunaClient(secret=settings.FAUNADB_KEY.get_secret_value())
-    return client.query(q.get(q.match(q.index("package_by_name"), package_name)))
+    return client.query(
+        q.get(q.match(q.index("package_by_name"), normalize(package_name)))
+    )
 
 
 async def get_package_names() -> List[str]:
@@ -83,6 +91,7 @@ async def get_pypi_data(package_name: str) -> dict:
 
     assert response.status_code == 200
     package_data = response.json()
+    package_data["normalized_name"] = normalize(package_data["info"]["name"])
 
     console.log(f"Logging PyPi data for {package_name} to FaunaDB.")
 
