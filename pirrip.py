@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from faunadb import query as q
 from faunadb.client import FaunaClient
-from pydantic import BaseSettings, DirectoryPath
+from pydantic import BaseSettings
 from pydantic.types import SecretStr
 from rich.console import Console
 
@@ -17,7 +17,6 @@ templates = Jinja2Templates(directory="templates")
 
 
 class PirripSettings(BaseSettings):
-    PACKAGE_DIR: Optional[DirectoryPath]
     PYPI_FALLBACK: Optional[bool] = True
     FAUNADB_KEY: SecretStr
 
