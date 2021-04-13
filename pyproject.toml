@@ -12,7 +12,7 @@ requests = "^2.25.1"
 Jinja2 = "^2.11.3"
 pydantic = "^1.8.1"
 rich = "^10.1.0"
-faunadb = "^4.0.1"
+faunadb = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
 

@@ -61,7 +61,7 @@ test = ["pytest (==5.4.3)", "pytest-cov (==2.10.0)", "pytest-asyncio (>=0.14.0,<
 
 [[package]]
 name = "faunadb"
-version = "4.0.1"
+version = "4.1.0"
 description = "FaunaDB Python driver"
 category = "main"
 optional = false
@@ -349,7 +349,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0c77fd3d0f24b36c08b2b02f4c6e4d1d53e5aed7c17acb295feecdefde4b2a5e"
+content-hash = "d0be713f33eac43e654a213007584502c7cf5a462fd0f17dd1c3b1424551574f"
 
 [metadata.files]
 certifi = [
@@ -377,7 +377,7 @@ fastapi = [
     {file = "fastapi-0.63.0.tar.gz", hash = "sha256:63c4592f5ef3edf30afa9a44fa7c6b7ccb20e0d3f68cd9eba07b44d552058dcb"},
 ]
 faunadb = [
-    {file = "faunadb-4.0.1-py2.py3-none-any.whl", hash = "sha256:4c1ad6771c9022ddd6198948f0858b25642d63dd69986e2d1ac3f4d030d392af"},
+    {file = "faunadb-4.1.0-py2.py3-none-any.whl", hash = "sha256:0a048838ef44f5cee653aadbc4302e48609d01dcaa795341c7ce049991a547f1"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
