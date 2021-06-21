@@ -11,7 +11,7 @@ uvicorn = { extras = ["standard"], version = "^0.14.0" }
 requests = "^2.25.1"
 Jinja2 = "^3.0.1"
 pydantic = "^1.8.2"
-rich = "^10.3.0"
+rich = "^10.4.0"
 faunadb = "^4.1.0"
 
 [tool.poetry.dev-dependencies]
