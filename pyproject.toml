@@ -8,7 +8,7 @@ authors = ["Josh Ourisman <me@josho.io>"]
 python = "^3.9"
 fastapi = "^0.65.2"
 uvicorn = { extras = ["standard"], version = "^0.14.0" }
-requests = "^2.25.1"
+requests = "^2.26.0"
 Jinja2 = "^3.0.1"
 pydantic = "^1.8.2"
 rich = "^10.5.0"
