@@ -6,7 +6,7 @@ authors = ["Josh Ourisman <me@josho.io>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
-fastapi = "^0.68.0"
+fastapi = "^0.68.1"
 uvicorn = { extras = ["standard"], version = "^0.15.0" }
 requests = "^2.26.0"
 Jinja2 = "^3.0.1"
