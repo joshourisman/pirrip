@@ -75,7 +75,7 @@ test = ["pytest (>=6.2.4,<7.0.0)", "pytest-cov (>=2.12.0,<3.0.0)", "pytest-async
 
 [[package]]
 name = "faunadb"
-version = "4.1.0"
+version = "4.1.1"
 description = "FaunaDB Python driver"
 category = "main"
 optional = false
@@ -88,7 +88,6 @@ iso8601 = "*"
 requests = "*"
 
 [package.extras]
-doc = ["sphinx", "sphinx-rtd-theme"]
 lint = ["pylint"]
 test = ["nose2", "nose2"]
 
@@ -363,7 +362,7 @@ python-versions = ">=3.6.1"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "a2eebb63b581c67bbe3bf836dee4a254598bdbef4e482a23c1c4020343de5a35"
+content-hash = "7b281451804e031f6c642d9881b8869047f8be0903f79fabf8ec27b90075baf0"
 
 [metadata.files]
 asgiref = [
@@ -395,7 +394,7 @@ fastapi = [
     {file = "fastapi-0.68.1.tar.gz", hash = "sha256:644bb815bae326575c4b2842469fb83053a4b974b82fa792ff9283d17fbbd99d"},
 ]
 faunadb = [
-    {file = "faunadb-4.1.0-py2.py3-none-any.whl", hash = "sha256:0a048838ef44f5cee653aadbc4302e48609d01dcaa795341c7ce049991a547f1"},
+    {file = "faunadb-4.1.1-py2.py3-none-any.whl", hash = "sha256:e197d356b783dfade08a1ffa7a4b32f2156c165c44d4e29b6605a97d38dfca02"},
 ]
 future = [
     {file = "future-0.18.2.tar.gz", hash = "sha256:b1bead90b70cf6ec3f0710ae53a525360fa360d306a86583adc6bf83a4db537d"},
