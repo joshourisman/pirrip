@@ -10,7 +10,7 @@ fastapi = "^0.70.1"
 uvicorn = { extras = ["standard"], version = "^0.16.0" }
 requests = "^2.26.0"
 Jinja2 = "^3.0.3"
-pydantic = "^1.8.2"
+pydantic = "^1.9.0"
 rich = "^10.16.1"
 faunadb = "^4.1.1"
 
