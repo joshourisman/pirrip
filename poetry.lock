@@ -74,7 +74,7 @@ test = ["flake8 (==3.7.8)", "hypothesis (==3.55.3)"]
 
 [[package]]
 name = "fastapi"
-version = "0.71.0"
+version = "0.72.0"
 description = "FastAPI framework, high performance, easy to learn, fast to code, ready for production"
 category = "main"
 optional = false
@@ -390,7 +390,7 @@ python-versions = ">=3.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "720a8c6623cc2fc11b279a6a26abf9b9210acbf747ee3bf352d23324757ff226"
+content-hash = "b85833cde73560b6c50f1d6b338eb6a51ffcb12b1676c3b65fa5a108d2f992cf"
 
 [metadata.files]
 anyio = [
@@ -422,8 +422,8 @@ commonmark = [
     {file = "commonmark-0.9.1.tar.gz", hash = "sha256:452f9dc859be7f06631ddcb328b6919c67984aca654e5fefb3914d54691aed60"},
 ]
 fastapi = [
-    {file = "fastapi-0.71.0-py3-none-any.whl", hash = "sha256:a78eca6b084de9667f2d5f37e2ae297270e5a119cd01c2f04815795da92fc87f"},
-    {file = "fastapi-0.71.0.tar.gz", hash = "sha256:2b5ac0ae89c80b40d1dd4b2ea0bb1f78d7c4affd3644d080bf050f084759fff2"},
+    {file = "fastapi-0.72.0-py3-none-any.whl", hash = "sha256:7421a2f30e9ed1866874cff089733d4f9a0cd4f49b6ea3995c0de75e32bbb52f"},
+    {file = "fastapi-0.72.0.tar.gz", hash = "sha256:019ec52c00581bc055e6dfb621aaa9c2a56007c283839305412e1073a777eaf1"},
 ]
 faunadb = [
     {file = "faunadb-4.1.1-py2.py3-none-any.whl", hash = "sha256:e197d356b783dfade08a1ffa7a4b32f2156c165c44d4e29b6605a97d38dfca02"},
